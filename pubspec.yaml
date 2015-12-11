@@ -1,0 +1,14 @@
+name: complex_matrix
+description: A starting point for Dart libraries or applications.
+version: 0.0.1
+author: Edouard Tavinor <edouardtavinor@gmail.com>
+homepage: https://github.com/ehrt74/dart_complex_matrix
+
+environment:
+  sdk: '>=1.0.0 <2.0.0'
+
+dependencies:
+  complex: ">=0.1.2 < 0.2.0"
+
+dev_dependencies:
+  test: '>=0.12.0 <0.13.0'
