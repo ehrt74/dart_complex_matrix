@@ -17,6 +17,8 @@ A simple usage example:
 
 ## Features and bugs
 
+0.0.2 fixed bug in cofactor function
+
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: http://example.com/issues/replaceme

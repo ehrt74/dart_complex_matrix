@@ -7,8 +7,12 @@ import 'package:complex_matrix/complex_matrix.dart';
 import 'package:test/test.dart';
 import 'package:complex/complex.dart';
 
+Complex c00 = new Complex(3,0);
+Complex c01 = new Complex(-2,0);
+Complex c10 = new Complex(-7,0);
+Complex c11 = new Complex(5,0);
 ComplexMatrix m1 = new ComplexMatrix.fromIterable(2,2,
-    [new Complex(2,0), new Complex(-1,0), new Complex(-3,0), new Complex(4,0)]);
+    [c00, c01, c10, c11]);
 
 void main() {
   test("equals works", () {
@@ -18,7 +22,15 @@ void main() {
 
   test("determinant works", () {
     var d = m1.getDeterminant();
-    expect(d, equals(new Complex(5,0)));
+    expect(d, equals(new Complex(1,0)));
+  });
+
+  test("cofactor works", () {
+    var co = m1.getCofactor();
+    expect(co.getAt(0,0), equals(c11));
+    expect(co.getAt(0,1), equals(-c10));
+    expect(co.getAt(1,0), equals(-c01));
+    expect(co.getAt(1,1), equals(c00));
   });
 
   test("transpose works", () {

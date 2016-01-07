@@ -103,7 +103,7 @@ class ComplexMatrix {
     for (int i=0; i<_NUMROWS; i++) {
       if (i%2==1) { factor = Complex.ONE * -1; }
       for (int j=0; j<_NUMCOLUMNS; j++) {
-        ret[i*_NUMROWS+j] = factor * this.getAt(i,j)*this.getSubMatrix(i,j).getDeterminant();
+        ret[i*_NUMCOLUMNS+j] = factor *this.getSubMatrix(i,j).getDeterminant();
         factor *= -1;
       }
     }
