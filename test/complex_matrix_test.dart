@@ -23,8 +23,8 @@ ComplexMatrix m2 = new ComplexMatrix.fromIterable(2,2,
 
 void main() {
   test("equals works", () {
-    var res = (ComplexMatrix.Identity(2)==ComplexMatrix.Identity(2));
-    expect(res, equals(true));
+    expect(ComplexMatrix.Identity(2), equals(ComplexMatrix.Identity(2)));
+    expect(m2, isNot(equals(m1)));
   });
 
   test("determinant works", () {
@@ -52,8 +52,10 @@ void main() {
   
   test("inverse works", () {
     expect(ComplexMatrix.Identity(2).getInverse(), equals(ComplexMatrix.Identity(2)));
+    expect(m2.getInverse()*m2, equals(ComplexMatrix.Identity(2)));
   });
 
+  
   test("getRow works", () {
     var row = m1.getRow(0);
     expect(row.getAt(0,1), equals(m1.getAt(0,1)));

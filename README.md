@@ -21,6 +21,8 @@ A simple usage example:
 
 0.0.3 added getConjugate() method. BREAKING CHANGES: renamed methods for consistancy
 
+0.0.4 added AreSimilar to compare Complex numbers
+
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: http://example.com/issues/replaceme

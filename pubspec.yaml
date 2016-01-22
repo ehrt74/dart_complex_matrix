@@ -1,6 +1,6 @@
 name: complex_matrix
 description: A simple library for complex matrices
-version: 0.0.3
+version: 0.0.4
 author: Edouard Tavinor <edouardtavinor@gmail.com>
 homepage: https://github.com/ehrt74/dart_complex_matrix
 

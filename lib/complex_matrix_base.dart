@@ -138,10 +138,19 @@ class ComplexMatrix {
       if (this._NUMROWS != other._NUMROWS) return false;
       if (this._NUMCOLUMNS != other._NUMCOLUMNS) return false;
       for (int i=0; i<_vals.length; i++) {
-        if (this._vals[i] != other._vals[i]) return false;
+        if (!AreSimilar(this._vals[i], other._vals[i])) return false;
+        //        if (this._vals[i] != other._vals[i]) return false;
       }
       return true;
     }
+    return false;
+  }
+
+  static num _EPSILON = 0.00001;
+  static bool AreSimilar(Complex c1, Complex c2) {
+    if (c1==c2) return true;
+    if (c1.abs()<_EPSILON && c2.abs()<_EPSILON) return true;
+    if ( (c1.abs()/c2.abs() -1)<_EPSILON && (c1.argument() - c2.argument).abs()<_EPSILON) return true;
     return false;
   }
 
