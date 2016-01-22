@@ -14,6 +14,13 @@ Complex c11 = new Complex(5,0);
 ComplexMatrix m1 = new ComplexMatrix.fromIterable(2,2,
     [c00, c01, c10, c11]);
 
+Complex d00 = new Complex(3,0);
+Complex d01 = new Complex(5,-2);
+Complex d10 = new Complex(5,2);
+Complex d11 = new Complex(3,0);
+ComplexMatrix m2 = new ComplexMatrix.fromIterable(2,2,
+    [d00, d01, d10, d11]);
+
 void main() {
   test("equals works", () {
     var res = (ComplexMatrix.Identity(2)==ComplexMatrix.Identity(2));
@@ -21,7 +28,7 @@ void main() {
   });
 
   test("determinant works", () {
-    var d = m1.getDeterminant();
+    var d = m1.determinant;
     expect(d, equals(new Complex(1,0)));
   });
 
@@ -34,15 +41,17 @@ void main() {
   });
 
   test("transpose works", () {
-    var m1t = m1.transpose();
+    var m1t = m1.getTranspose();
     expect(m1t.getAt(1,0), equals(m1.getAt(0,1)));
+  });
+
+  test("getConjugate works", () {
+    var m2c = m2.getConjugate();
+    expect(m2c, equals(m2.getTranspose()));
   });
   
   test("inverse works", () {
-    var inv = ComplexMatrix.Identity(2).inverse();
-    print(inv);
-    var res = (ComplexMatrix.Identity(2)==inv);
-    expect(res, equals(true));
+    expect(ComplexMatrix.Identity(2).getInverse(), equals(ComplexMatrix.Identity(2)));
   });
 
   test("getRow works", () {

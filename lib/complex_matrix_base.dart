@@ -6,6 +6,7 @@ class ComplexMatrix {
 
   List<Complex> _vals;
 
+  
 
   ComplexMatrix getRow(int i) {
     if (i>=_NUMROWS) throw "$i out of bounds";
@@ -51,7 +52,12 @@ class ComplexMatrix {
     return new ComplexMatrix.fromIterable(_NUMROWS, _NUMROWS, vals);
   }
 
-  ComplexMatrix transpose() {
+  ComplexMatrix getConjugate() {
+    var vals = this._vals.map((Complex c)=>c.conjugate());
+    return new ComplexMatrix.fromIterable(_NUMROWS, _NUMCOLUMNS, vals);
+  }
+  
+  ComplexMatrix getTranspose() {
     var vals = new List<Complex>(_NUMROWS*_NUMCOLUMNS);
     for (int i=0; i<_NUMROWS; i++) {
       for(int j=0; j<_NUMCOLUMNS; j++) {
@@ -65,18 +71,23 @@ class ComplexMatrix {
     if (_NUMROWS!=_NUMCOLUMNS) throw "matrix not square";
   }
 
-  Complex getDeterminant() {
+  Complex _determinant;
+  
+  Complex get determinant {
     _checkSquare();
+    if (_determinant!=null) return _determinant;
     if (_NUMROWS==1) {
-      return getAt(0,0);
+      _determinant = getAt(0,0);
+      return _determinant;
     }
     Complex d = Complex.ZERO;
     Complex fact = Complex.ONE;
     for (int i=0; i<_NUMROWS; i++) {
-      d += fact * this.getAt(i,0) * this.getSubMatrix(i,0).getDeterminant();
+      d += fact * this.getAt(i,0) * this.getSubMatrix(i,0).determinant;
       fact *= -1;
     }
-    return d;
+    this._determinant = d;
+    return _determinant;
   }
   
   String toString() {
@@ -84,16 +95,16 @@ class ComplexMatrix {
     
   }
 
-  ComplexMatrix inverse() {
+  ComplexMatrix getInverse() {
     _checkSquare();
     if (_NUMROWS==1) return new ComplexMatrix.fromIterable(1,1, Complex.ONE/getAt(0,0));
     var adj = this.getAdjugate();
-    return adj.scale(this.getDeterminant());
+    return adj.scale(this.determinant);
   }
 
   ComplexMatrix getAdjugate() {
     _checkSquare();
-    return this.getCofactor().transpose();
+    return this.getCofactor().getTranspose();
   }
   
   ComplexMatrix getCofactor() {
@@ -103,7 +114,7 @@ class ComplexMatrix {
     for (int i=0; i<_NUMROWS; i++) {
       if (i%2==1) { factor = Complex.ONE * -1; }
       for (int j=0; j<_NUMCOLUMNS; j++) {
-        ret[i*_NUMCOLUMNS+j] = factor *this.getSubMatrix(i,j).getDeterminant();
+        ret[i*_NUMCOLUMNS+j] = factor *this.getSubMatrix(i,j).determinant;
         factor *= -1;
       }
     }

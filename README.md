@@ -19,6 +19,8 @@ A simple usage example:
 
 0.0.2 fixed bug in cofactor function
 
+0.0.3 added getConjugate() method. BREAKING CHANGES: renamed methods for consistancy
+
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: http://example.com/issues/replaceme
