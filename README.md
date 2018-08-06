@@ -23,6 +23,8 @@ A simple usage example:
 
 0.0.4 added AreSimilar to compare Complex numbers
 
+0.0.5 bug fixes
+
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: http://example.com/issues/replaceme

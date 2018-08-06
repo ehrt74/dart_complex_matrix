@@ -3,10 +3,11 @@ part of complex_matrix;
 class ComplexMatrix {
   final int _NUMROWS;
   final int _NUMCOLUMNS;
+  int get _numelements => _NUMROWS * _NUMCOLUMNS;
+
+  Point get dimensions=>new Point(_NUMROWS, _NUMCOLUMNS);
 
   List<Complex> _vals;
-
-  
 
   ComplexMatrix getRow(int i) {
     if (i>=_NUMROWS) throw "$i out of bounds";
@@ -21,7 +22,7 @@ class ComplexMatrix {
     return new ComplexMatrix.fromIterable(_NUMROWS, 1, ret);
   }
 
-  
+
   ComplexMatrix getSubMatrix(int not_i, int not_j) {
     _checkBounds(not_i, not_j);
     if (_NUMROWS<2 || _NUMCOLUMNS<2) throw "matrix already too small to build a sub matrix";
@@ -53,10 +54,10 @@ class ComplexMatrix {
   }
 
   ComplexMatrix getConjugate() {
-    var vals = this._vals.map((Complex c)=>c.conjugate());
+    var vals = this._vals.map((Complex c)=>c.conjugate);
     return new ComplexMatrix.fromIterable(_NUMROWS, _NUMCOLUMNS, vals);
   }
-  
+
   ComplexMatrix getTranspose() {
     var vals = new List<Complex>(_NUMROWS*_NUMCOLUMNS);
     for (int i=0; i<_NUMROWS; i++) {
@@ -72,7 +73,7 @@ class ComplexMatrix {
   }
 
   Complex _determinant;
-  
+
   Complex get determinant {
     _checkSquare();
     if (_determinant!=null) return _determinant;
@@ -84,20 +85,20 @@ class ComplexMatrix {
     Complex fact = Complex.ONE;
     for (int i=0; i<_NUMROWS; i++) {
       d += fact * this.getAt(i,0) * this.getSubMatrix(i,0).determinant;
-      fact *= -1;
+      fact = fact.stretch(-1); // *= -1;
     }
     this._determinant = d;
     return _determinant;
   }
-  
+
   String toString() {
     return "${_vals}";
-    
+
   }
 
   ComplexMatrix getInverse() {
     _checkSquare();
-    if (_NUMROWS==1) return new ComplexMatrix.fromIterable(1,1, Complex.ONE/getAt(0,0));
+    if (_NUMROWS==1) return new ComplexMatrix.fromIterable(1,1, [Complex.ONE/getAt(0,0)]);
     var adj = this.getAdjugate();
     return adj.scale(this.determinant);
   }
@@ -106,37 +107,42 @@ class ComplexMatrix {
     _checkSquare();
     return this.getCofactor().getTranspose();
   }
-  
+
   ComplexMatrix getCofactor() {
     _checkSquare();
     var ret = new List<Complex>(_NUMROWS*_NUMCOLUMNS);
     Complex factor = Complex.ONE;
     for (int i=0; i<_NUMROWS; i++) {
-      if (i%2==1) { factor = Complex.ONE * -1; }
+      if (i%2==1) factor = Complex.MINUSONE;
       for (int j=0; j<_NUMCOLUMNS; j++) {
         ret[i*_NUMCOLUMNS+j] = factor *this.getSubMatrix(i,j).determinant;
-        factor *= -1;
+        factor=factor.stretch(-1); // *= -1;
       }
     }
     return new ComplexMatrix.fromIterable(_NUMROWS, _NUMCOLUMNS, ret);
   }
 
-  ComplexMatrix.fromIterable(this._NUMROWS, this._NUMCOLUMNS, Iterable<Complex> cl) {
-    _vals = new List<Complex>(_NUMROWS*_NUMCOLUMNS);
-    if (cl.length!= this._vals.length) throw "list has wrong length";
-    _vals = cl.map((var c)=>c).toList();
+  factory ComplexMatrix.zero(int _NUMROWS, int _NUMCOLUMNS) {
+    return new ComplexMatrix.fromIterable(_NUMROWS, _NUMCOLUMNS, null);
   }
 
-    // zero based. i is row, j is column
-  Complex getAt(int i, int j) {
-    _checkBounds(i, j);
-    return _vals[i*_NUMCOLUMNS + j];
+  ComplexMatrix.fromIterable(this._NUMROWS, this._NUMCOLUMNS, Iterable<Complex> cl) {
+    if (cl != null) {
+      if (cl.length != this._numelements) throw "list has wrong length";
+      _vals = cl.map((var c) => c).toList(growable:false);
+    } else {
+      _vals = new List.generate(this._numelements, (_)=>Complex.ZERO, growable:false);
+    }
+  }
+
+  Complex getAt(int row, int col) {
+    _checkBounds(row, col);
+    return _vals[row*_NUMCOLUMNS + col];
   }
 
   bool operator ==(Object other) {
     if (other is ComplexMatrix) {
-      if (this._NUMROWS != other._NUMROWS) return false;
-      if (this._NUMCOLUMNS != other._NUMCOLUMNS) return false;
+      if (this.dimensions != other.dimensions) return false;
       for (int i=0; i<_vals.length; i++) {
         if (!AreSimilar(this._vals[i], other._vals[i])) return false;
         //        if (this._vals[i] != other._vals[i]) return false;
@@ -149,34 +155,51 @@ class ComplexMatrix {
   static num _EPSILON = 0.00001;
   static bool AreSimilar(Complex c1, Complex c2) {
     if (c1==c2) return true;
-    if (c1.abs()<_EPSILON && c2.abs()<_EPSILON) return true;
-    if ( (c1.abs()/c2.abs() -1)<_EPSILON && (c1.argument() - c2.argument).abs()<_EPSILON) return true;
+    if (c1.modulus<_EPSILON && c2.modulus<_EPSILON) return true;
+    if ( (c1.modulus/c2.modulus -1)<_EPSILON && (c1.argument - c2.argument).abs()<_EPSILON) return true;
     return false;
   }
 
-  ComplexMatrix operator *(Object other) {
-    if (other is ComplexMatrix) {
-      if (this._NUMCOLUMNS != other._NUMROWS) throw "incompatible matrix sizes for multiplication";
-      int retROWS = this._NUMROWS;
-      int retCOLUMNS = other._NUMCOLUMNS;
-      var ret = new List<Complex>(retROWS*retCOLUMNS);
-      for (int this_i=0; this_i<this._NUMROWS; this_i++) {
-        var this_row = this.getRow(this_i);
-        for (int other_j = 0; other_j<other._NUMCOLUMNS; other_j++) {
-          var other_column = other.getColumn(other_j);
-          Complex res = Complex.ZERO;
-          for (int n=0; n<this._NUMCOLUMNS; n++) {
-            res += this_row.getAt(0,n) * other_column.getAt(n,0);
-          }
-          ret[this_i*retROWS + other_j]=res;
-        }
-      }
-      return new ComplexMatrix.fromIterable(retROWS, retCOLUMNS, ret);
-    } else {
-      throw "other is not complexmatrix";
+  void add(ComplexMatrix other) {
+    if (other.dimensions != this.dimensions) throw "incompatible matrix sizes for addition";
+    for (int i =0; i<this._vals.length; i++) {
+      this._vals[i] += other._vals[i];
     }
   }
-  
+
+  ComplexMatrix operator +(ComplexMatrix other) {
+    if (other.dimensions !=
+        this.dimensions) throw "incompatible matrix sizes for addition";
+    return new ComplexMatrix.fromIterable(this._NUMROWS, this._NUMCOLUMNS, new List<Complex>.generate(this._vals.length,
+            (int i)=>this._vals[i]+other._vals[i]));
+  }
+
+  ComplexMatrix operator -(ComplexMatrix other) {
+    if (other.dimensions != this.dimensions) throw "incompatible matrix sizes for subtraction";
+    return new ComplexMatrix.fromIterable(this._NUMROWS, this._NUMCOLUMNS, new List<Complex>.generate(this._vals.length,
+            (int i)=>this._vals[i]-other._vals[i]));
+  }
+
+  ComplexMatrix operator *(ComplexMatrix other) {
+    if (this._NUMCOLUMNS != other._NUMROWS) throw "incompatible matrix sizes for multiplication";
+    int retROWS = this._NUMROWS;
+    int retCOLUMNS = other._NUMCOLUMNS;
+    var ret = new List<Complex>(retROWS*retCOLUMNS);
+    for (int this_i=0; this_i<this._NUMROWS; this_i++) {
+      var this_row = this.getRow(this_i);
+      for (int other_j = 0; other_j<other._NUMCOLUMNS; other_j++) {
+        var other_column = other.getColumn(other_j);
+        Complex res = Complex.ZERO;
+        for (int n=0; n<this._NUMCOLUMNS; n++) {
+          res += this_row.getAt(0,n) * other_column.getAt(n,0);
+        }
+        ret[this_i*retROWS + other_j]=res;
+      }
+    }
+    return new ComplexMatrix.fromIterable(retROWS, retCOLUMNS, ret);
+  }
+
+  /* scales matrix by 1/s */
   ComplexMatrix scale(Complex s) {
     return new ComplexMatrix.fromIterable(_NUMROWS, _NUMCOLUMNS, _vals.map((var c)=>c/s));
   }
@@ -187,5 +210,5 @@ class ComplexMatrix {
   }
 
 
-  
+
 }

@@ -5,19 +5,18 @@ library complex_matrix.test;
 
 import 'package:complex_matrix/complex_matrix.dart';
 import 'package:test/test.dart';
-import 'package:complex/complex.dart';
 
-Complex c00 = new Complex(3,0);
-Complex c01 = new Complex(-2,0);
-Complex c10 = new Complex(-7,0);
-Complex c11 = new Complex(5,0);
+Complex c00 = new Complex.cartesian(3,0);
+Complex c01 = new Complex.cartesian(-2,0);
+Complex c10 = new Complex.cartesian(-7,0);
+Complex c11 = new Complex.cartesian(5,0);
 ComplexMatrix m1 = new ComplexMatrix.fromIterable(2,2,
     [c00, c01, c10, c11]);
 
-Complex d00 = new Complex(3,0);
-Complex d01 = new Complex(5,-2);
-Complex d10 = new Complex(5,2);
-Complex d11 = new Complex(3,0);
+Complex d00 = new Complex.cartesian(3,0);
+Complex d01 = new Complex.cartesian(5,-2);
+Complex d10 = new Complex.cartesian(5,2);
+Complex d11 = new Complex.cartesian(3,0);
 ComplexMatrix m2 = new ComplexMatrix.fromIterable(2,2,
     [d00, d01, d10, d11]);
 
@@ -29,15 +28,15 @@ void main() {
 
   test("determinant works", () {
     var d = m1.determinant;
-    expect(d, equals(new Complex(1,0)));
+    expect(d==Complex.ONE, equals(true));
   });
 
   test("cofactor works", () {
     var co = m1.getCofactor();
-    expect(co.getAt(0,0), equals(c11));
-    expect(co.getAt(0,1), equals(-c10));
-    expect(co.getAt(1,0), equals(-c01));
-    expect(co.getAt(1,1), equals(c00));
+    expect(co.getAt(0,0)-c11, equals(Complex.ZERO));
+    expect(co.getAt(0,1)+c10, equals(Complex.ZERO));
+    expect(co.getAt(1,0)+c01, equals(Complex.ZERO));
+    expect(co.getAt(1,1)-c00, equals(Complex.ZERO));
   });
 
   test("transpose works", () {
@@ -49,13 +48,13 @@ void main() {
     var m2c = m2.getConjugate();
     expect(m2c, equals(m2.getTranspose()));
   });
-  
+
   test("inverse works", () {
     expect(ComplexMatrix.Identity(2).getInverse(), equals(ComplexMatrix.Identity(2)));
     expect(m2.getInverse()*m2, equals(ComplexMatrix.Identity(2)));
   });
 
-  
+
   test("getRow works", () {
     var row = m1.getRow(0);
     expect(row.getAt(0,1), equals(m1.getAt(0,1)));
@@ -70,9 +69,9 @@ void main() {
     var sm = m1.getSubMatrix(0,0);
     expect(sm.getAt(0,0), equals(m1.getAt(1,1)));
   });
-  
+
   test("multiplication works", () {
     var m2 = m1*ComplexMatrix.Identity(2);
-    expect(m2.getAt(1,1), equals(m1.getAt(1,1)));
+    expect(m2.getAt(1,1)-m1.getAt(1,1), equals(Complex.ZERO));
   });
 }

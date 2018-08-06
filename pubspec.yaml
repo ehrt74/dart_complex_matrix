@@ -1,14 +1,13 @@
 name: complex_matrix
 description: A simple library for complex matrices
-version: 0.0.4
+version: 0.1.0
 author: Edouard Tavinor <edouardtavinor@gmail.com>
 homepage: https://github.com/ehrt74/dart_complex_matrix
 
 environment:
-  sdk: '>=1.0.0 <2.0.0'
-
+  sdk: '>=1.0.0 <3.0.0'
 dependencies:
-  complex: ">=0.1.2 < 0.2.0"
+  my_complex: ">=0.0.1 <1.0.0"
 
 dev_dependencies:
-  test: '>=0.12.0 <0.13.0'
+  test: '>=0.12.0 <2.0.0'

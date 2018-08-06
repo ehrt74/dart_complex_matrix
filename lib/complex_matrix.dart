@@ -8,6 +8,8 @@ library complex_matrix;
 
 // TODO: Export any libraries intended for clients of this package.
 
-import 'package:complex/complex.dart';
+import 'package:my_complex/my_complex.dart';
+export 'package:my_complex/my_complex.dart';
+import 'dart:math' show Point;
 
 part 'complex_matrix_base.dart';
